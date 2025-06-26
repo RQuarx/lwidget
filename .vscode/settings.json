@@ -1,0 +1,14 @@
+{
+    "clangd.path": "/usr/bin/clangd",
+    "clangd.arguments": [
+        "--log=verbose",
+        "--pretty",
+        "--background-index",
+        "-j=8",
+        "--compile-commands-dir=target/",
+        "--header-insertion=never",
+        "--enable-config",
+    ],
+    "C_Cpp.default.compileCommands": "/home/rquarx/Projects/lwidget/target/compile_commands.json",
+    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild",
+}

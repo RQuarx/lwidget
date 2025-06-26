@@ -32,7 +32,7 @@ jobs:
               shell: bash
               run: |
                   sed -i 's/SigLevel    = Required DatabaseOptional/SigLevel    = Optional TrustAll/' /etc/pacman.conf
-                  pacman -Syyu --noconfirm --noprogressbar --needed clang meson cmake pkg-config
+                  pacman -Syyu --noconfirm --noprogressbar --needed clang meson cmake pkg-config lld
                   pacman -Syyu --noconfirm --noprogressbar --needed - < dependencies.txt
 
             - name: compile

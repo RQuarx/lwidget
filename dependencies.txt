@@ -1,0 +1,3 @@
+lua
+gtk3
+gtk-layer-shell

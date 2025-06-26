@@ -1,0 +1,69 @@
+name: lwidget build
+
+on:
+    push:
+        paths:
+            - "**/meson.build"
+            - "**/meson_options.txt"
+            - ".github/workflows/*.yml"
+            - "**/*.c"
+            - "**/*.h"
+            - "*.lua"
+permissions:
+    contents: read
+jobs:
+    clang:
+        name: "Build lwidget - clang"
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: cache packages
+              uses: actions/cache@v4
+              with:
+                  path: /var/cache/pacman/pkg
+                  key: ${{ runner.os }}-pacman-${{ hashFiles('dependencies.txt') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pacman-
+
+            - name: install dependencies
+              shell: bash
+              run: |
+                  sed -i 's/SigLevel    = Required DatabaseOptional/SigLevel    = Optional TrustAll/' /etc/pacman.conf
+                  pacman -Syyu --noconfirm --noprogressbar --needed clang meson cmake pkg-config
+                  pacman -Syyu --noconfirm --noprogressbar --needed - < dependencies.txt
+
+            - name: compile
+              run: |
+                  CC=clang CC_LD=lld meson setup target
+                  meson compile -C target
+
+    gcc:
+        name: "Build lwidget - gcc"
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: cache packages
+              uses: actions/cache@v4
+              with:
+                  path: /var/cache/pacman/pkg
+                  key: ${{ runner.os }}-pacman-${{ hashFiles('dependencies.txt') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pacman-
+
+            - name: install dependencies
+              shell: bash
+              run: |
+                  sed -i 's/SigLevel    = Required DatabaseOptional/SigLevel    = Optional TrustAll/' /etc/pacman.conf
+                  pacman -Syyu --noconfirm --noprogressbar --needed gcc meson cmake pkg-config
+                  pacman -Syyu --noconfirm --noprogressbar --needed - < dependencies.txt
+
+            - name: compile
+              run: |
+                  meson setup target
+                  meson compile -C target
